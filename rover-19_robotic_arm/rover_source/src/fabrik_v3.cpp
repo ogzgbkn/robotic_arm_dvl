@@ -97,9 +97,9 @@ int main(int argc, char **argv){
 			first_run = false;
 		}
 
-		X += joy_msg.get_axis(3) * 0.020;
-		Y += joy_msg.get_axis(0) * 0.020;
-		Z += joy_msg.get_axis(1) * 0.020;
+		X += joy_msg.get_axis(3) * 0.035;
+		Y += joy_msg.get_axis(0) * 0.035;
+		Z += joy_msg.get_axis(1) * 0.035;
 
 		//cout << endl << "X: " << X << "  " << "Y: " << Y << "  " << "Z: " << Z << "  " << endl;
 
@@ -220,6 +220,11 @@ int main(int argc, char **argv){
 		joint4_pub.publish(joint4_last);
 		joint5_pub.publish(joint5_last);
 		joint6_pub.publish(joint6_last);
+
+		my_joints[0] = coordinate(0.0,0.0,14.0);
+		my_joints[1] = coordinate(0.0,0.0,64.0);
+		my_joints[2] = coordinate(42.0,0.0,53.0);
+		my_joints[3] = coordinate(52.0,0.0,53.0);
 	 
 	    loop_rate.sleep();
 	    ++count;

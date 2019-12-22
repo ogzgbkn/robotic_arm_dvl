@@ -159,6 +159,9 @@ target_link_libraries(fabrik_v1 ${catkin_LIBRARIES})
 add_executable(fabrik_v2 src/fabrik_v2.cpp)
 target_link_libraries(fabrik_v2 ${catkin_LIBRARIES})
 
+add_executable(fabrik_v3 src/fabrik_v3.cpp)
+target_link_libraries(fabrik_v3 ${catkin_LIBRARIES})
+
 add_executable(joystick_listener src/joystick_listener.cpp)
 target_link_libraries(joystick_listener ${catkin_LIBRARIES}) 
 
