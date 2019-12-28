@@ -97,9 +97,26 @@ int main(int argc, char **argv){
 			first_run = false;
 		}
 
-		X += joy_msg.get_axis(3) * 0.035;
-		Y += joy_msg.get_axis(0) * 0.035;
-		Z += joy_msg.get_axis(1) * 0.035;
+		if(joy_msg.get_button(5) == 1){
+
+			X += joy_msg.get_axis(3) * 0.10;
+			Y += joy_msg.get_axis(0) * 0.10;
+			Z += joy_msg.get_axis(1) * 0.10;
+		}
+
+		else if(joy_msg.get_button(4) == 1){
+
+			X += joy_msg.get_axis(3) * 0.02;
+			Y += joy_msg.get_axis(0) * 0.02;
+			Z += joy_msg.get_axis(1) * 0.02;
+		}
+
+		else{
+
+			X += joy_msg.get_axis(3) * 0.06;
+			Y += joy_msg.get_axis(0) * 0.06;
+			Z += joy_msg.get_axis(1) * 0.06;
+		}
 
 		//cout << endl << "X: " << X << "  " << "Y: " << Y << "  " << "Z: " << Z << "  " << endl;
 

@@ -10,7 +10,7 @@ using namespace std;
 
 sensor_msgs::Joy joy_msg;
 
-double axes_1;
+int button_6;
 
 bool new_message = false;
 
@@ -18,8 +18,8 @@ bool new_message = false;
 void joystick_callback(const sensor_msgs::Joy::ConstPtr& msg)
 {
     new_message = true;
-    axes_1 = msg->axes[0];
-    cout << axes_1 << endl;
+    button_6 = msg->buttons[5];
+    cout << button_6 << endl;
     cout << "Hello" << endl;
 }
 
@@ -30,7 +30,7 @@ int main(int argc, char **argv){
 	ros::NodeHandle joy_handle;
 
 	ros::Subscriber joy_sub = joy_handle.subscribe("/joy",1,joystick_callback);
-	cout << "Hello2" << endl;
+	//cout << "Hello2" << endl;
 	ros::Rate loop_rate(100);
 
 	while(ros::ok()){

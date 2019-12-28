@@ -83,6 +83,8 @@ int main(int argc, char **argv){
 	double X;
 	double Y;
 	double Z;
+
+	double joint_1_angle;
 	
 	while(ros::ok()){
 
@@ -94,27 +96,50 @@ int main(int argc, char **argv){
 			Y = 0.0;
 			Z = 0.0;
 
+			joint_1_angle = 0.0;
+
 			first_run = false;
 		}
 
-		X += joy_msg.get_axis(3) * 0.020;
-		Y += joy_msg.get_axis(0) * 0.020;
-		Z += joy_msg.get_axis(1) * 0.020;
+		if(joy_msg.get_button(5) == 1){
+
+			X += joy_msg.get_axis(3) * 0.10;
+			Y += joy_msg.get_axis(0) * 0.10;
+			Z += joy_msg.get_axis(1) * 0.10;
+		}
+
+		else if(joy_msg.get_button(4) == 1){
+
+			X += joy_msg.get_axis(3) * 0.02;
+			Y += joy_msg.get_axis(0) * 0.02;
+			Z += joy_msg.get_axis(1) * 0.02;
+		}
+
+		else{
+
+			X += joy_msg.get_axis(3) * 0.06;
+			Y += joy_msg.get_axis(0) * 0.06;
+			Z += joy_msg.get_axis(1) * 0.06;
+		}
 
 		//cout << endl << "X: " << X << "  " << "Y: " << Y << "  " << "Z: " << Z << "  " << endl;
 
 		coordinate new_end_point_pos = coordinate(52.0 + X, 0.0 + Y, 53.0 + Z);
 		cout << endl << "Target: X = " << new_end_point_pos.get_x() << "  Y = " << new_end_point_pos.get_y() << "  Z = " << new_end_point_pos.get_z() << endl << endl;
 
+		double joint_1_angle_dif = (-1.0)*joint_1_angle;
+
 		coordinate reference_coord = coordinate(4,0,0);
 		coordinate proj_joint_1 = coordinate(new_end_point_pos.get_x(), new_end_point_pos.get_y(), 0);
-		double joint_1_angle = angle_of_vectors(proj_joint_1, reference_coord);		// Projection of endpoint on xy and reference cord
+		joint_1_angle = angle_of_vectors(proj_joint_1, reference_coord);		// Projection of endpoint on xy and reference cord
 		if(proj_joint_1.get_y() < 0) joint_1_angle = joint_1_angle * (-1);
 
-		rotate_on_xy(my_joints[0], joint_1_angle);
-		rotate_on_xy(my_joints[1], joint_1_angle);
-		rotate_on_xy(my_joints[2], joint_1_angle);
-		rotate_on_xy(my_joints[3], joint_1_angle);
+		joint_1_angle_dif += joint_1_angle; 
+
+		rotate_on_xy(my_joints[0], joint_1_angle_dif);
+		rotate_on_xy(my_joints[1], joint_1_angle_dif);
+		rotate_on_xy(my_joints[2], joint_1_angle_dif);
+		rotate_on_xy(my_joints[3], joint_1_angle_dif);
 
 		/*for(i = 0; i < 4; i++){
 
