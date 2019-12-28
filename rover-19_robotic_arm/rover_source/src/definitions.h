@@ -4,6 +4,8 @@
 using namespace std;
 
 const double PI = 3.14159265;
+const double REACH = 100.0;
+const double TOLERANCE = 0.1;
 
 double abs_val(double candidate){
 
@@ -71,9 +73,9 @@ double coordinate::get_z(){
 
 void coordinate::update(double new_x, double new_y, double new_z){
 
-	x = new_x;
-	y = new_y;
-	z = new_z;
+	x += new_x;
+	y += new_y;
+	z += new_z;
 }
 
 double coordinate::calculate_dist(coordinate second_cord){
@@ -215,4 +217,56 @@ void joy_message::set_buttons(double new_button_0, double new_button_1, double n
 double joy_message::get_button(int button_index){
 
 	return buttons[button_index];
+}
+
+void FABRIK_algorithm(vector<coordinate>& my_joints, double* link_lengths, coordinate new_end_point_pos){
+
+	int i;
+	double r, lambda;
+	double distance_from_beginning = abs_val(new_end_point_pos.calculate_dist(my_joints[0]));
+
+	if(distance_from_beginning > REACH){
+
+		for(i = 0; i < my_joints.size(); i++){
+
+			r = abs_val(new_end_point_pos.calculate_dist(my_joints[i]));
+			lambda = link_lengths[i]/r;
+
+			my_joints[i+1] = my_joints[i].crd_multiplication(1-lambda) + new_end_point_pos.crd_multiplication(lambda);
+		}
+
+	}
+
+	else{
+
+		coordinate b;
+		b = my_joints[0];
+
+		double distance_to_target = new_end_point_pos.calculate_dist(my_joints[my_joints.size()-1]);
+
+		while(distance_to_target > TOLERANCE){
+
+			my_joints[my_joints.size()-1] = new_end_point_pos;
+
+			for(i = my_joints.size()-2; i >= 0; i--){
+
+				r = abs_val(my_joints[i+1].calculate_dist(my_joints[i]));
+				lambda = link_lengths[i]/r;
+
+				my_joints[i] = my_joints[i+1].crd_multiplication(1-lambda) + my_joints[i].crd_multiplication(lambda);
+			}
+
+			my_joints[0] = b;
+
+			for(i = 0; i < my_joints.size()-1; i++){
+
+				r = abs_val(my_joints[i+1].calculate_dist(my_joints[i]));
+				lambda = link_lengths[i]/r;
+
+				my_joints[i+1] = my_joints[i].crd_multiplication(1-lambda) + my_joints[i+1].crd_multiplication(lambda); 
+			}
+
+			distance_to_target = abs_val(my_joints[my_joints.size()-1].calculate_dist(new_end_point_pos));
+		}
+	}
 }

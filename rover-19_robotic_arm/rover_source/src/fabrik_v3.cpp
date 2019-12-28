@@ -10,10 +10,6 @@
 
 using namespace std;
 
-
-const double REACH = 100.0;
-const double TOLERANCE = 0.1;
-
 bool new_message = false;
 
 joy_message joy_msg;
@@ -22,7 +18,7 @@ joy_message joy_msg;
 void joystick_callback(const sensor_msgs::Joy::ConstPtr& msg)
 {
     new_message = true;
-    cout << msg->axes[0] << endl;
+    //cout << msg->axes[0] << endl;
     joy_msg.set_axes(msg->axes[0],msg->axes[1],msg->axes[2],msg->axes[3],msg->axes[4],msg->axes[5]);
     joy_msg.set_buttons(msg->buttons[0],msg->buttons[1],msg->buttons[2],msg->buttons[3],msg->buttons[4],msg->buttons[5],msg->buttons[6],msg->buttons[7],msg->buttons[8],msg->buttons[9],msg->buttons[10],msg->buttons[11]);
 }
@@ -138,52 +134,7 @@ int main(int argc, char **argv){
 			cout << "The joint " << i << " position is: x = " << my_joints[i].get_x() << "  y = " << my_joints[i].get_y() << "  z = " << my_joints[i].get_z() << endl;
 		}*/
 
-		double distance_from_beginning = abs_val(new_end_point_pos.calculate_dist(my_joints[0]));
-
-		if(distance_from_beginning > REACH){
-
-			for(i = 0; i < my_joints.size(); i++){
-
-				r = abs_val(new_end_point_pos.calculate_dist(my_joints[i]));
-				lambda = link_lengths[i]/r;
-
-				my_joints[i+1] = my_joints[i].crd_multiplication(1-lambda) + new_end_point_pos.crd_multiplication(lambda);
-			}
-
-		}
-
-		else{
-
-			coordinate b;
-			b = my_joints[0];
-
-			double distance_to_target = new_end_point_pos.calculate_dist(my_joints[my_joints.size()-1]);
-
-			while(distance_to_target > TOLERANCE){
-
-				my_joints[my_joints.size()-1] = new_end_point_pos;
-
-				for(i = my_joints.size()-2; i >= 0; i--){
-
-					r = abs_val(my_joints[i+1].calculate_dist(my_joints[i]));
-					lambda = link_lengths[i]/r;
-
-					my_joints[i] = my_joints[i+1].crd_multiplication(1-lambda) + my_joints[i].crd_multiplication(lambda);
-				}
-
-				my_joints[0] = b;
-
-				for(i = 0; i < my_joints.size()-1; i++){
-
-					r = abs_val(my_joints[i+1].calculate_dist(my_joints[i]));
-					lambda = link_lengths[i]/r;
-
-					my_joints[i+1] = my_joints[i].crd_multiplication(1-lambda) + my_joints[i+1].crd_multiplication(lambda); 
-				}
-
-				distance_to_target = abs_val(my_joints[my_joints.size()-1].calculate_dist(new_end_point_pos));
-			}
-		}
+		FABRIK_algorithm(my_joints, link_lengths, new_end_point_pos);
 
 		for(i = 0; i < 4; i++){
 
